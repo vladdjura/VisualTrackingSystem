@@ -8,11 +8,13 @@ def frameByFrame(img):
     cv2.waitKey(25)
     cv2.destroyAllWindows()
 
+# show image    
 def show(img):
     cv2.imshow('frame', img)
     cv2.waitKey(0)
     cv2.destroyAllWindows()
-
+    
+# draw vertical and horizontal lines for creating parking mask
 def liner(x_, y_, w_, h_, img, color = 'b', size = 6):
     colors = {
         'b' : (255, 0, 0),
@@ -22,6 +24,7 @@ def liner(x_, y_, w_, h_, img, color = 'b', size = 6):
     color = colors[color]
     return cv2.line(img, (x_,y_), (w_, h_), color, size)
 
+# returns parking space as numpy array
 def extractor(img):
     pixels = []
     rows, cols, _ = img.shape
@@ -36,12 +39,14 @@ def extractor(img):
         switch = 0
     return np.array(pixels)
 
+# transforms image into black & white
 def gray(img):
     gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
     return gray
 
 space_nums = [(1, 985, 760, 3, 4),(3, 1140, 760, 3, 4),(5, 830, 760, 3, 4)]
 
+# draw numbers on spaces
 def space_ids(img, space_nums):
     for space in space_nums:
         font = cv2.FONT_HERSHEY_SIMPLEX
@@ -56,8 +61,10 @@ def space_ids(img, space_nums):
 paths = ['C:\\Users\\Vladislav\\Desktop\\12_2_2021 10_01_42 AM (UTC-05_00)Video1.mov',
          'C:\\Users\\Vladislav\\Desktop\\12_2_2021 10_01_42 AM (UTC-05_00)Video_2.mov',
          'C:\\Users\\Vladislav\\Desktop\\12_2_2021 10_01_42 AM (UTC-05_00)moving 0007.mov'
+         ''
          ]
 
+# returns 
 def qualifier(space_num = 1):
     space = img[mask == space_num]
     if np.var(space) > 1000:
@@ -66,6 +73,7 @@ def qualifier(space_num = 1):
         print('Parking space is unoccupied')
 
         
+# create mask for given parking space        
 def masker(mask, img, frame, space_number = 1, park_row = 0):
     rows = [range(590,860), range(278,390)][park_row]
     cols = img.shape[1]

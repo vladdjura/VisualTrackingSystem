@@ -76,8 +76,59 @@ class Video:
             
         translator = {0 : 'Free', 1 : 'Occupied'}
             
+        if int(not marks[0]) in marks:  
+            return f'Change happened from {translator[marks[0]]} at frame {marks.index(int(not marks[0])) + start}'
+        return 'No change happened for asked frame range!'
+    
+    def states(self, start, stop, mask, space_num = 1, variance = 1000):
+        marks = []
+        for i in range(start, stop):
+            self.frame = i
+            frame = self.read
+            space = frame[mask == space_num]
             
-        return f'Change happened from {translator[marks[0]]} at frame {marks.index(int(not marks[0])) + start}'
+            if np.var(space) > variance:
+                marks.append(1)
+
+            else:
+                marks.append(0)
+            
+        translator = {0 : 'Free', 1 : 'Occupied'}
+            
+        if int(not marks[0]) in marks:  
+            return f'Change happened from {translator[marks[0]]} at frame {marks.index(int(not marks[0])) + start}', marks
+        return 'No change happened for asked frame range!', marks
             
             
-                  
+    def img_texter(self, frame_num, mask, save_path, space_num = 1, variance = 1000):
+        
+        font = cv2.FONT_HERSHEY_SIMPLEX#font = cv2.FONT_HERSHEY_SIMPLEXS
+        org = (500, 1000)
+        fontScale = 3
+        color = (0, 0, 255)
+        thickness = 3
+        
+        self.frame = frame_num
+        frame = self.read
+        space = frame[mask == space_num]
+            
+        if np.var(space) > variance:
+            frame = cv2.putText(frame, 'Space is occupied', org, font, 
+                                   fontScale, color, thickness, cv2.LINE_AA)
+        else:
+            frame = cv2.putText(frame, 'Space is unoccupied', org, font, 
+                                   fontScale, color, thickness, cv2.LINE_AA)
+            
+        cv2.imwrite(save_path, frame)
+        
+        
+    def state(self, frame_num, mask, space_num = 1, variance = 1000):
+        
+        self.frame = frame_num
+        frame = self.read
+        space = frame[mask == space_num]
+            
+        if np.var(space) > variance:
+            frame = print('Space is occupied')
+        else:
+            frame = print('Space is unoccupied')
