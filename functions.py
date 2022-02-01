@@ -43,8 +43,19 @@ def extractor(img):
 def gray(img):
     gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
     return gray
+'''
+frame = liner(620, 580, 522, 797, frame, color = 'g')
+frame = liner(716, 584, 624, 828, frame, color = 'g')
+frame = liner(830, 588, 760, 860, frame, color = 'g')
+frame = liner(958, 588, 933, 882, frame, color = 'g')
+frame = liner(1095, 588, 1115, 882, frame, color = 'g')
+frame = liner(1224, 590, 1287, 862, frame, color = 'g')
+frame = liner(1337, 590, 1427, 837, frame, color = 'g')
+frame = liner(1438, 586, 1543, 810, frame, color = 'g')
+'''
 
-space_nums = [(1, 985, 760, 3, 4),(3, 1140, 760, 3, 4),(5, 830, 760, 3, 4)]
+space_nums = [(1, 985, 760, 3, 4),(3, 1140, 760, 3, 4),(5, 830, 760, 3, 4), 
+              (7, 1280, 760, 3, 4), (9, 716, 760, 3, 4), (11, 1390, 760, 3, 4), (13, 620, 760, 3, 4)]
 
 # draw numbers on spaces
 def space_ids(img, space_nums):
