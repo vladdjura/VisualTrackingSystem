@@ -3,16 +3,21 @@ import sys
 import pandas as pd
 import cv2
 
-def frameByFrame(img):
-    cv2.imshow('frame', img)
-    cv2.waitKey(25)
-    cv2.destroyAllWindows()
 
 # show image    
 def show(img):
-    cv2.imshow('frame', img)
-    cv2.waitKey(0)
-    cv2.destroyAllWindows()
+    try:
+        cv2.imshow('frame', img)
+        cv2.waitKey(0)
+        cv2.destroyAllWindows()
+    except:
+        raise ValueError("ValueError exception thrown")
+
+        
+# save image
+def save(path, img):
+    cv2.imwrite(path, img)
+
     
 # draw vertical and horizontal lines for creating parking mask
 def liner(x_, y_, w_, h_, img, color = 'b', size = 6):
@@ -24,41 +29,21 @@ def liner(x_, y_, w_, h_, img, color = 'b', size = 6):
     color = colors[color]
     return cv2.line(img, (x_,y_), (w_, h_), color, size)
 
-# returns parking space as numpy array
-def extractor(img):
-    pixels = []
-    rows, cols, _ = img.shape
-    switch = 0
-    for row in range(rows):
-        for col in range(cols):
-            pixel = img[row,col]
-            if (pixel == np.array([0,255, 0])).all():
-                switch+=1
-            elif switch == 1:
-                pixels.append(pixel)
-        switch = 0
-    return np.array(pixels)
+
 
 # transforms image into black & white
 def gray(img):
     gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
     return gray
-'''
-frame = liner(620, 580, 522, 797, frame, color = 'g')
-frame = liner(716, 584, 624, 828, frame, color = 'g')
-frame = liner(830, 588, 760, 860, frame, color = 'g')
-frame = liner(958, 588, 933, 882, frame, color = 'g')
-frame = liner(1095, 588, 1115, 882, frame, color = 'g')
-frame = liner(1224, 590, 1287, 862, frame, color = 'g')
-frame = liner(1337, 590, 1427, 837, frame, color = 'g')
-frame = liner(1438, 586, 1543, 810, frame, color = 'g')
-'''
 
-space_nums = [(1, 985, 760, 3, 4),(3, 1140, 760, 3, 4),(5, 830, 760, 3, 4), 
-              (7, 1280, 760, 3, 4), (9, 716, 760, 3, 4), (11, 1390, 760, 3, 4), (13, 620, 760, 3, 4)]
+
+space_nums = [(1, 995, 760, 3, 4),(3, 1140, 760, 3, 4),(5, 838, 760, 3, 4),(7, 1284, 760, 3, 4), (9, 700, 760, 3, 4),
+              (2, 1018, 350, 1, 4),(4, 1110, 350, 1, 4),(6, 924, 350, 1, 4),(8, 1194, 350, 1, 4), (10, 826, 350, 1, 4),
+              (11, 1390, 760, 3, 4), (13, 540, 760, 3, 4), (14, 744, 350, 1, 4), (12, 1260, 350, 1, 4)]
+
 
 # draw numbers on spaces
-def space_ids(img, space_nums):
+def space_ids(img, space_nums=space_nums):
     for space in space_nums:
         font = cv2.FONT_HERSHEY_SIMPLEX
         org = (space[1], space[2])
@@ -71,38 +56,7 @@ def space_ids(img, space_nums):
 
 paths = ['C:\\Users\\Vladislav\\Desktop\\12_2_2021 10_01_42 AM (UTC-05_00)Video1.mov',
          'C:\\Users\\Vladislav\\Desktop\\12_2_2021 10_01_42 AM (UTC-05_00)Video_2.mov',
-         'C:\\Users\\Vladislav\\Desktop\\12_2_2021 10_01_42 AM (UTC-05_00)moving 0007.mov'
-         ''
-         ]
+         'C:\\Users\\Vladislav\\Desktop\\12_2_2021 10_01_42 AM (UTC-05_00)moving 0007.mov']
 
-# returns 
-def qualifier(space_num = 1):
-    space = img[mask == space_num]
-    if np.var(space) > 1000:
-        print('Space is occupied')
-    else:
-        print('Parking space is unoccupied')
 
-        
-# create mask for given parking space        
-def masker(mask, img, frame, space_number = 1, park_row = 0):
-    rows = [range(590,860), range(278,390)][park_row]
-    cols = img.shape[1]
-
-    for row in rows:
-        color = 'mixed'
-        switch = 0
-        for col in range(cols):
-            if switch == 2:
-                mask[row,col] = 1
-            if np.array_equal(frame[row][col], np.array([0,255,0])):
-                state = 'green'
-            else:
-                state = 'mixed'
-            if state != color:
-                switch += 1
-                color = state
-            if switch == 3:
-                break
-    return mask
 
