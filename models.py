@@ -139,11 +139,12 @@ class Video:
         cv2.destroyAllWindows()
         
         
+    # write frame with variances and colored numbers
     def save_var(self, path):
         frame = self.read
         variances = self.var
-        self.paste_var(frame, variances)
-        self.space_ids(frame)
+        colors = self.paste_var(frame, variances)
+        self.space_ids(frame, colors)
         cv2.imwrite(path, frame)
     
     
@@ -157,8 +158,8 @@ class Video:
             self.frame = i
             frame = self.read
             variances = self.var
-            self.paste_var(frame, variances)
-            self.space_ids(frame)
+            colors = self.paste_var(frame, variances)
+            self.space_ids(frame, colors)
             result.write(frame)
            
     
