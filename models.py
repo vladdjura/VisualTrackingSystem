@@ -86,12 +86,15 @@ class Video:
         return variances
 
     # draw numbers on spaces
-    def space_ids(self, frame):
+    def space_ids(self, frame, colors = None):
         for space in self.space_nums:
             font = cv2.FONT_HERSHEY_SIMPLEX
             org = (space[1], space[2])
             fontScale = space[3]
-            color = (210, 210, 210)
+            if colors:
+                color = [(0,0,255),(0,255,0)][colors[space[0]]]
+            else:
+                color = (210, 210, 210)
             thickness = space[4]
             frame = cv2.putText(frame, str(space[0]), org, font, 
                                fontScale, color, thickness, cv2.LINE_AA)
@@ -106,23 +109,31 @@ class Video:
         frame = cv2.circle(frame, (1640, 150), 15, (0,0,255), -1)
         frame = cv2.putText(frame, 'Unoccupied', (1690, 110), font, fontScale, (0,255,0), thickness, cv2.LINE_AA)
         frame = cv2.putText(frame, 'Occupied', (1690, 160), font, fontScale, (0,0,255), thickness, cv2.LINE_AA)
+        colors = {}
         for space_id, var in variances.items():          
             org = (100, space_id*50 + 100)
             if var > 1500:
                 color = (0, 0, 255)
+                c = 0
             else:
                 color = (0, 255, 0)
+                c = 1
             phrase = f'{space_id}: {int(var)}'
             frame = cv2.putText(frame, phrase, org, font, 
                                fontScale, color, thickness, cv2.LINE_AA)
+            
+            
+            colors[space_id] = c
+        return colors
                        
    
     @property    
     def show_var(self):
         frame = self.read
         variances = self.var
-        self.paste_var(frame, variances)
-        self.space_ids(frame)
+        colors = self.paste_var(frame, variances)
+        print(colors)
+        self.space_ids(frame, colors)
         cv2.imshow(f'frame', frame)
         cv2.waitKey(0)
         cv2.destroyAllWindows()
@@ -134,7 +145,22 @@ class Video:
         self.paste_var(frame, variances)
         self.space_ids(frame)
         cv2.imwrite(path, frame)
-   
+    
+    
+    def save_video_var(self, path, start = 1, stop = None):
+        if not stop:
+            stop = self.frames
+        size = int(self.cap.get(3)), int(self.cap.get(4))
+        result = cv2.VideoWriter(path, cv2.VideoWriter_fourcc(*'MJPG'), 1, size)
+        for i in range(start, stop):
+            print(f'frame {i}/{stop - start}')
+            self.frame = i
+            frame = self.read
+            variances = self.var
+            self.paste_var(frame, variances)
+            self.space_ids(frame)
+            result.write(frame)
+           
     
     # Create video with space availability text
     def texter(self, start, stop, mask, save_path, space_num = 1, variance = 1000):
