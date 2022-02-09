@@ -14,9 +14,11 @@ class Video:
         self.path = path
         self.cap = cv2.VideoCapture(self.path)
         self.frame = 1
-        self.frames = int(self.cap.get(cv2.CAP_PROP_FRAME_COUNT))           
+        self.frames = int(self.cap.get(cv2.CAP_PROP_FRAME_COUNT))
+        self.variance = 1600           
         
         print(f'Number of frames: {self.frames}')
+        print(f'Image path > {self.path}')
         
     def show(self, gray = False):
         frame = self.read
@@ -112,7 +114,7 @@ class Video:
         colors = {}
         for space_id, var in variances.items():          
             org = (100, space_id*50 + 100)
-            if var > 1500:
+            if var > self.variance:
                 color = (0, 0, 255)
                 c = 0
             else:
@@ -164,7 +166,7 @@ class Video:
            
     
     # Create video with space availability text
-    def texter(self, start, stop, mask, save_path, space_num = 1, variance = 1000):
+    def texter(self, start, stop, save_path, space_num = 1):
         size = int(self.cap.get(3)), int(self.cap.get(4))
         result = cv2.VideoWriter(save_path,cv2.VideoWriter_fourcc(*'MJPG'),10, size)
         font = cv2.FONT_HERSHEY_SIMPLEX#font = cv2.FONT_HERSHEY_SIMPLEXS
@@ -177,9 +179,9 @@ class Video:
         for i in range(start, stop):
             self.frame = i
             frame = self.read
-            space = frame[mask == space_num]
+            space = frame[self.mask == space_num]
             
-            if np.var(space) > variance:
+            if np.var(space) > self.variance:
                 frame = cv2.putText(frame, 'Space is occupied', org, font, 
                                    fontScale, color, thickness, cv2.LINE_AA)
                 marks.append(1)
@@ -198,14 +200,14 @@ class Video:
             return f'Change happened from {translator[marks[0]]} at frame {marks.index(int(not marks[0])) + start}'
         return 'No change happened for asked frame range!'
     
-    def states(self, start, stop, mask, space_num = 1, variance = 1000):
+    def states(self, start, stop, space_num = 1):
         marks = []
         for i in range(start, stop):
             self.frame = i
             frame = self.read
-            space = frame[mask == space_num]
+            space = frame[self.mask == space_num]
             
-            if np.var(space) > variance:
+            if np.var(space) > self.variance:
                 marks.append(1)
 
             else:
@@ -218,7 +220,7 @@ class Video:
         return 'No change happened for asked frame range!', marks
             
             
-    def img_texter(self, frame_num, mask, save_path, space_num = 1, variance = 1000):
+    def img_texter(self, frame_num, save_path, space_num = 1):
         
         font = cv2.FONT_HERSHEY_SIMPLEX#font = cv2.FONT_HERSHEY_SIMPLEXS
         org = (500, 1000)
@@ -228,9 +230,9 @@ class Video:
         
         self.frame = frame_num
         frame = self.read
-        space = frame[mask == space_num]
+        space = frame[self.mask == space_num]
             
-        if np.var(space) > variance:
+        if np.var(space) > self.variance:
             frame = cv2.putText(frame, 'Space is occupied', org, font, 
                                    fontScale, color, thickness, cv2.LINE_AA)
         else:
@@ -240,13 +242,13 @@ class Video:
         cv2.imwrite(save_path, frame)
         
         
-    def state(self, frame_num, mask, space_num = 1, variance = 1000):
+    def state(self, frame_num, space_num = 1):
         
         self.frame = frame_num
         frame = self.read
-        space = frame[mask == space_num]
+        space = frame[self.mask == space_num]
             
-        if np.var(space) > variance:
+        if np.var(space) > self.variance:
             frame = print('Space is occupied')
         else:
             frame = print('Space is unoccupied')

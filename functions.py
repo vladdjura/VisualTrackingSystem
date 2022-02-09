@@ -54,9 +54,26 @@ def space_ids(img, space_nums=space_nums):
                            fontScale, color, thickness, cv2.LINE_AA)
    
 
-paths = ['C:\\Users\\Vladislav\\Desktop\\12_2_2021 10_01_42 AM (UTC-05_00)Video1.mov',
-         'C:\\Users\\Vladislav\\Desktop\\12_2_2021 10_01_42 AM (UTC-05_00)Video_2.mov',
-         'C:\\Users\\Vladislav\\Desktop\\12_2_2021 10_01_42 AM (UTC-05_00)moving 0007.mov']
+paths = ['C:/Users/Vladislav/Desktop/Videos/12_2_2021 10_01_42 AM (UTC-05_00)Video1.mov',
+         'C:/Users/Vladislav/Desktop/Videos/12_2_2021 10_01_42 AM (UTC-05_00)Video_2.mov',
+         'C:/Users/Vladislav/Desktop/Videos/12_2_2021 10_01_42 AM (UTC-05_00)moving 0007.mov',
+         'C:/Users/Vladislav/Desktop/Videos/12_2_2021 10_01_42 AM (UTC-05_00)_0010 (Converted).mov',
+         'C:/Users/Vladislav/Desktop/Videos/12_2_2021 10_01_42 AM (UTC-05_00)_0025 (Converted).mov',
+         'C:/Users/Vladislav/Desktop/Videos/12_2_2021 10_01_42 AM (UTC-05_00)_0031 (Converted).mov',
+         'C:/Users/Vladislav/Desktop/Videos/12_2_2021 10_01_42 AM (UTC-05_00)_0035 (Converted).mov',
+         'C:/Users/Vladislav/Desktop/Videos/12_2_2021 10_01_42 AM (UTC-05_00)_0040 (Converted).mov',
+         'C:/Users/Vladislav/Desktop/Videos/12_2_2021 10_01_42 AM (UTC-05_00)_0043 (Converted).mov',
+         'C:/Users/Vladislav/Desktop/Videos/12_2_2021 10_01_42 AM (UTC-05_00)_0045 (Converted).mov',
+         'C:/Users/Vladislav/Desktop/Videos/12_2_2021 10_01_42 AM (UTC-05_00)_0048 (Converted).mov',
+         'C:/Users/Vladislav/Desktop/Videos/12_2_2021 10_01_42 AM (UTC-05_00)_0049 (Converted).mov',
+         'C:/Users/Vladislav/Desktop/Videos/12_2_2021 10_01_42 AM (UTC-05_00)_0059 (Converted).mov',
+         'C:/Users/Vladislav/Desktop/Videos/12_2_2021 10_01_42 AM (UTC-05_00)_0060 (Converted).mov',
+         'C:/Users/Vladislav/Desktop/Videos/12_2_2021 10_01_42 AM (UTC-05_00)_0058 (Converted).mov',
+         'C:/Users/Vladislav/Desktop/Videos/12_2_2021 10_01_42 AM (UTC-05_00)_0065 (Converted).mov',
+         'C:/Users/Vladislav/Desktop/Videos/12_2_2021 10_01_42 AM (UTC-05_00)_0066 (Converted).mov',
+         'C:/Users/Vladislav/Desktop/Videos/12_2_2021 10_01_42 AM (UTC-05_00)_0068 (Converted).mov',
+         'C:/Users/Vladislav/Desktop/Videos/12_2_2021 10_01_42 AM (UTC-05_00)_0069 (Converted).mov',
+         ]
 
 
 
