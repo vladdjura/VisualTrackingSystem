@@ -1,5 +1,6 @@
 import cv2
 import numpy as np
+import json
 
 class Video:
     
@@ -252,3 +253,14 @@ class Video:
             frame = print('Space is occupied')
         else:
             frame = print('Space is unoccupied')
+
+    def write(self, start, stop):
+        for i in range(start, stop):
+            self.frame = i
+            frame = self.read
+            variances = self.var
+            with open('variances.json', 'w') as f:
+                json.dump(variances, f, indent = 4)
+                
+        return variances
+
