@@ -15,7 +15,7 @@ class Video:
         self.cap = cv2.VideoCapture(self.path)
         self.frame = 1
         self.frames = int(self.cap.get(cv2.CAP_PROP_FRAME_COUNT))
-        self.variance = 1600           
+        self.variance = 1800           
         
         print(f'Number of frames: {self.frames}')
         print(f'Image path > {self.path}')
