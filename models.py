@@ -1,6 +1,8 @@
 import cv2
 import numpy as np
 import json
+from datetime import datetime
+from twilio.rest import Client
 
 class Video:
     
@@ -263,4 +265,37 @@ class Video:
                 json.dump(variances, f, indent = 4)
                 
         return variances
+
+    def tracker(self, ac, at, tw, tracker, start = 0, stop = None):
+        print(tracker)
+        local = {}
+        for i in range(start, stop):
+            with open('sms_maper.json', 'r') as f:
+                maper = json.load(f)
+            self.frame = i
+            frame = self.read
+            variances = self.var
+            if i % 10 == 0:
+                for timestamp, (tracked_parking_space, id)  in tracker.items():
+                    local[tracked_parking_space] = maper[id]
+            for tracked_parking_space, sms in local.items():
+                print(local, i)
+                if variances[tracked_parking_space] < self.variance:
+                    print(self.variance, variances[tracked_parking_space], i)
+                    moment = datetime.now()
+                    self.massage(ac, at, tw, sms, moment, tracked_parking_space)
+                    return f'Sent at frame {i} at {moment}'
+
+
+    def massage(self, ac, at, tw, sms, moment, tracked_parking_space):
+        client = Client(ac, at)
+        my_msg = f"Vehicle has left parking space with id {tracked_parking_space}, at {moment}"
+        message = client.messages.create(to=sms, from_=tw, body=my_msg)
+
+
+
+            
+
+
+
 
