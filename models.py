@@ -51,7 +51,7 @@ class Video:
             ret, frame = self.cap.read()
             if ret == True:
                 cv2.imshow('Frame',frame)
-                if cv2.waitKey(10) & 0xFF == ord('q'):
+                if cv2.waitKey(15) & 0xFF == ord('q'):
                     break
             else:
                 break
@@ -105,7 +105,7 @@ class Video:
                                fontScale, color, thickness, cv2.LINE_AA)
     
     #paste variances on imige
-    def paste_var(self, frame, variances):
+    def paste_var(self, frame, variances, frame_num = 0):
         font = cv2.FONT_HERSHEY_SIMPLEX
         fontScale = 1
         thickness = 2
@@ -114,6 +114,7 @@ class Video:
         frame = cv2.circle(frame, (1640, 150), 15, (0,0,255), -1)
         frame = cv2.putText(frame, 'Unoccupied', (1690, 110), font, fontScale, (0,255,0), thickness, cv2.LINE_AA)
         frame = cv2.putText(frame, 'Occupied', (1690, 160), font, fontScale, (0,0,255), thickness, cv2.LINE_AA)
+        frame = cv2.putText(frame, str(frame_num), (1690, 1040), font, fontScale, (0,0,0), 4, cv2.LINE_AA)
         colors = {}
         for space_id, var in variances.items():          
             org = (100, space_id*50 + 100)
@@ -159,11 +160,12 @@ class Video:
         size = int(self.cap.get(3)), int(self.cap.get(4))
         result = cv2.VideoWriter(path, cv2.VideoWriter_fourcc(*'MJPG'), 1, size)
         for i in range(start, stop):
-            print(f'frame {i}/{stop - start}')
+            if i%5==0:
+                print(f'frame {i}/{stop}')
             self.frame = i
             frame = self.read
             variances = self.var
-            colors = self.paste_var(frame, variances)
+            colors = self.paste_var(frame, variances, i)
             self.space_ids(frame, colors)
             result.write(frame)
            
@@ -279,17 +281,18 @@ class Video:
                 for timestamp, (tracked_parking_space, id)  in tracker.items():
                     local[tracked_parking_space] = maper[id]
             for tracked_parking_space, sms in local.items():
-                print(local, i)
+                #print(local, i)
                 if variances[tracked_parking_space] < self.variance:
                     print(self.variance, variances[tracked_parking_space], i)
                     moment = datetime.now()
+                    moment = moment.strftime("%H:%M:%S")
                     self.massage(ac, at, tw, sms, moment, tracked_parking_space)
-                    return f'Sent at frame {i} at {moment}'
+                    return f'Vehicle has left parking space {tracked_parking_space}, at {moment}. \nFrame {i}'
 
 
     def massage(self, ac, at, tw, sms, moment, tracked_parking_space):
         client = Client(ac, at)
-        my_msg = f"Vehicle has left parking space with id {tracked_parking_space}, at {moment}"
+        my_msg = f"Vehicle has left parking space {tracked_parking_space}, at {moment}"
         message = client.messages.create(to=sms, from_=tw, body=my_msg)
 
 
