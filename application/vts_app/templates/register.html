@@ -1,0 +1,113 @@
+{% extends 'base.html' %}
+{% block a %}
+
+<form method="POST" action="">
+    {{ form.hidden_tag() }} <!-- CSRF - nema sanse da radi bez ovoga -->
+    <div class="block p-6 rounded-lg bg-white max-w-sm m-auto">
+        
+        <div class='text-2xl mb-10 text-center'>
+            Registration
+        </div>
+
+        <div class="form-group mb-6">
+            {{ form.username.label(class="form-label inline-block mb-2 text-gray-700") }}
+
+            {% if form.username.errors %}
+            <div class="form-group mb-6">          
+                {{ form.username(class=input_error) }}  
+            
+                {% for error in form.username.errors %}
+                <ul class="errorlist">
+                    <li class='text-red-600 text-sm'>{{ error }}</li>
+                </ul>
+                {% endfor %}
+            
+            {% else %}
+                {{ form.username(class=input_ok) }}  
+            {% endif %}       
+        </div>
+
+        <div class="form-group mb-6">
+            {{ form.email.label(class="form-label inline-block mb-2 text-gray-700") }}
+
+            {% if form.email.errors %}
+            <div class="form-group mb-6">          
+                {{ form.email(class=input_error) }}  
+            
+                {% for error in form.email.errors %}
+                <ul class="errorlist">
+                    <li class='text-red-600 text-sm'>{{ error }}</li>
+                </ul>
+                {% endfor %}
+            
+            {% else %}
+                {{ form.email(class=input_ok) }}  
+            {% endif %}       
+        </div>
+
+        <div class="form-group mb-6">
+            {{ form.phone.label(class="form-label inline-block mb-2 text-gray-700") }}
+
+            {% if form.phone.errors %}
+            <div class="form-group mb-6">          
+                {{ form.phone(placeholder="+09123456789", class=input_error) }}  
+            
+                {% for error in form.phone.errors %}
+                <ul class="errorlist">
+                    <li class='text-red-600 text-sm'>{{ error }}</li>
+                </ul>
+                {% endfor %}
+            
+            {% else %}
+                {{ form.phone(placeholder="+09123456789", class=input_ok) }}  
+            {% endif %}       
+        </div>
+
+        <div class="form-group mb-6">
+            {{ form.password.label(class="form-label inline-block mb-2 text-gray-700") }}
+
+            {% if form.password.errors %}
+            <div class="form-group mb-6">          
+                {{ form.password(class=input_error) }}  
+            
+                {% for error in form.password.errors %}
+                <ul class="errorlist">
+                    <li class='text-red-600 text-sm'>{{ error }}</li>
+                </ul>
+                {% endfor %}
+            
+            {% else %}
+                {{ form.password(class=input_ok) }}  
+            {% endif %}       
+        </div>
+
+        <div class="form-group mb-6">
+            {{ form.confirm_password.label(class="form-label inline-block mb-2 text-gray-700") }}
+
+            {% if form.confirm_password.errors %}
+            <div class="form-group mb-6">          
+                {{ form.confirm_password(class=input_error) }}  
+            
+                {% for error in form.confirm_password.errors %}
+                <ul class="errorlist">
+                    <li class='text-red-600 text-sm'>{{ error }}</li>
+                </ul>
+                {% endfor %}
+            
+            {% else %}
+                {{ form.confirm_password(class=input_ok) }}  
+            {% endif %}       
+        </div>
+       
+        <div class="mt-20 text-center">
+            <a href = "{{ url_for('login') }}"  class='text-blue-600 text-sm'>Already have an account? Sign in</a>
+        </div>
+
+        <div>
+            {{ form.submit(class=submit) }}
+        </div>
+      
+    </div>
+</form>
+
+{% endblock a %}

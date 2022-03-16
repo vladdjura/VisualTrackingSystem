@@ -1,4 +1,5 @@
-from run import db
+from vts_app import db
+from datetime import datetime
 
 class User(db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -7,8 +8,9 @@ class User(db.Model):
     phone = db.Column(db.String(12), nullable=False)
     password = db.Column(db.String(60), nullable=False)
     parking_space = db.Column(db.Integer, default = 0)
-    registration = db.Column(db.String(19), default = None) #date-time of registration
-    timestamp = db.Column(db.String(19), default = None)
+    registration_time = db.Column(db.DateTime, nullable=False, default=datetime.today()) #date-time of registration
+    calls = db.Column(db.Integer, default = 0)
+    call_time = db.Column(db.DateTime, nullable=False, default=datetime.today())
     status = db.Column(db.Integer, default = 0)
     colleague = db.Column(db.Integer, default = 0)
 
