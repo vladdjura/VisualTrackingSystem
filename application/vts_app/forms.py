@@ -1,7 +1,7 @@
 from flask_wtf import FlaskForm
 from wtforms import StringField, PasswordField, SubmitField, IntegerField
 from wtforms.validators import DataRequired, Email, Length, EqualTo, Regexp, NumberRange, ValidationError
-from vts_app.models import User 
+from vts_app.models import User
 
 class RegistrationForm(FlaskForm):
     username = StringField('Username', validators=[DataRequired(), Length(min=2, max=20)])
@@ -22,10 +22,18 @@ class RegistrationForm(FlaskForm):
             raise ValidationError('That email is taken. Please choose a different one.')
 
 class LoginForm(FlaskForm):
-    email = StringField('Email', validators=[DataRequired()])
-    password = StringField('Password', validators=[DataRequired()])
+    email = StringField('Email',validators=[DataRequired(), Email()])
+    password = PasswordField('Password', validators=[DataRequired()])
     submit = SubmitField('Login')
 
 class ParkingSpaceForm(FlaskForm):
-    space_id = IntegerField('space_id', validators=[DataRequired(), NumberRange(min=1, max=14)])
+    parking_id = IntegerField('parking_id', validators=[DataRequired(), NumberRange(min=1, max=14, message='parking space id takes labels from 1 to 14')])
     submit = SubmitField('Start Tracking')
+
+class ExitForm(FlaskForm):
+    submit = SubmitField('Stop Tracking')
+
+class StoperForm(FlaskForm):
+    password = PasswordField('Password', validators=[DataRequired()])
+    user_id = IntegerField('User ID', validators=[DataRequired(), NumberRange(min=1)])
+    submit = SubmitField('Stop Tracking')

@@ -1,43 +1,22 @@
-from flask import render_template, url_for, redirect, request
-from vts_app.forms import RegistrationForm, LoginForm, ParkingSpaceForm
-from vts_app.styles import input_error, input_ok, submit, input_main
+from vts_app.styles import input_ok, input_error, submit, input_main, error_main
+from flask import render_template, redirect, url_for, flash
+from vts_app import app, db, bcrypt
+from vts_app.forms import RegistrationForm, LoginForm, ParkingSpaceForm, ExitForm, StoperForm
+from vts_app.models import User
 from datetime import datetime
 from flask_login import login_user, current_user, logout_user, login_required
-from vts_app.models import User
-from vts_app import app, db, bcrypt
 
-
-@app.route("/")
-@app.route("/login")
-def login():
-    form = LoginForm()
-    if form.validate_on_submit():
-        return redirect(url_for('api'))
-        user = User.query.filter_by(email=form.email.data).first()
-        if user and bcrypt.check_password_hash(user.password, form.password.data):
-            login_user(user, remember=form.remember.data)
-            next_page = request.args.get('next')
-            return redirect(next_page) if next_page else redirect(url_for('main'))
-    return render_template('login.html', 
-                            form = form,
-                            input_error = input_error,
-                            input_ok = input_ok,
-                            submit = submit)
-
-@app.route("/register", methods=['GET', 'POST'])
+@app.route("/register", methods = ['GET','POST'])
 def register():
-    '''
     if current_user.is_authenticated:
-        return redirect(url_for('main'))
-    '''
+        return redirect(url_for('main')) 
     form = RegistrationForm()
     if form.validate_on_submit():
-        hashed_pass = bcrypt.generate_password_hash(form.password.data).decode('utf-8')
-
+        hashed_password = bcrypt.generate_password_hash(form.password.data).decode('utf-8')
         user = User(username=form.username.data, 
                     email=form.email.data, 
                     phone=form.phone.data,
-                    password=hashed_pass)
+                    password=hashed_password)
         db.session.add(user)
         db.session.commit()
         form = LoginForm()
@@ -53,24 +32,70 @@ def register():
                             submit = submit)
 
 
-@app.route("/main", methods=['GET', 'POST'])
+@app.route('/', methods=['GET', 'POST'])
+@app.route("/login", methods=['GET', 'POST']) 
+def login():
+    if current_user.is_authenticated:
+        return redirect(url_for('main')) 
+    form = LoginForm()
+    if form.validate_on_submit():
+        user = User.query.filter_by(email=form.email.data).first()
+        if user and bcrypt.check_password_hash(user.password, form.password.data):
+            login_user(user)
+            return redirect(url_for('main'))   
+    return render_template('login.html', 
+                            form = form, 
+                            input_ok = input_ok, 
+                            input_error = input_error,
+                            submit = submit)
 
+
+@app.route("/main", methods=['GET', 'POST'])
+@login_required
 def main():
     form = ParkingSpaceForm()
     if form.validate_on_submit():
         form = ParkingSpaceForm()
-        parking_id=form.space_id.data
+        parking_id=form.parking_id.data
         user = current_user
         user.parking_space = parking_id
         user.call_time = datetime.today()
         user.calls += 1
+        user.status = 1
         db.session.commit()
         return redirect (url_for('exit'))
     return render_template('main.html', 
                             form=form,
                             input_ok = input_main, 
-                            input_error = input_error,
+                            input_error = error_main,
                             submit = submit)
+
+
+@app.route("/exit", methods=['GET', 'POST'])
+@login_required
+def exit():
+    form = ExitForm()
+    if form.validate_on_submit():
+        user = current_user
+        user.status = 0
+        db.session.commit()  
+        return redirect(url_for('main'))  
+    user = current_user
+    time = user.call_time.strftime('%Hh : %Mm : %Ss')
+    space = user.parking_space
+    username = user.username
+    return render_template('exit.html',
+                            form = form,
+                            time = time,
+                            space = space,
+                            username = username,
+                            submit = submit)
+
+@app.route("/logout")
+def logout():
+    logout_user()
+    return redirect(url_for('login'))   
+
 
 @app.route("/api")
 def api():
@@ -83,12 +108,24 @@ def api():
         d['TIME'] = object.call_time.strftime('%H %M %S')
         d['SPACE'] = object.parking_space
         d['PHONE'] = object.phone
+        d['STATUS'] = object.status
         listing['active'].append(d)
     return listing
 
-@app.route("/exit")
-def exit():
-    return render_template('exit.html')
 
-if __name__ == '__main__':
-    app.run(debug=True)
+@app.route('/stoper', methods = ['GET','POST'])
+def stoper():
+    form = StoperForm()
+    if form.validate_on_submit():
+        form = StoperForm()
+        admin = User.query.get(1)
+        if bcrypt.check_password_hash(admin.password, form.password.data):
+            user = User.query.get(form.user_id.data)
+            user.status = 0
+            db.session.commit()
+            flash('Status successfully changed')    
+    return render_template('stoper.html',
+                            form = form,
+                            input_ok = input_ok, 
+                            input_error = input_error,
+                            submit = submit)

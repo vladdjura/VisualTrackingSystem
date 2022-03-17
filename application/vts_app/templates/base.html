@@ -22,7 +22,15 @@
 
 <body style='background-image: url("C:\\Users\\Vladislav\\Desktop\\RIT-spirit-paw.jpg")'>
   <p class='text-center text-3xl mt-5 mb-3 text-blue-400'>Visual Tracking System</p>
-
+  {% with messages = get_flashed_messages(with_categories=true) %}
+  {% if messages %}
+    {% for category, message in messages %}
+      <div class='text-red-600 text-center'>
+        {{ message }}
+      </div>
+    {% endfor %}
+  {% endif %}
+  {% endwith %}
   {% block a %}
   {% endblock a %}
 </body>

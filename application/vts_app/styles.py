@@ -65,7 +65,6 @@ submit = '''
         ease-in-out 
         cursor-pointer
         '''
-
 input_main = '''
             form-control 
             block w-full 
@@ -84,6 +83,29 @@ input_main = '''
             ease-in-out 
             m-0 
             focus:text-gray-700 
+            focus:bg-white 
+            focus:border-blue-600 
+            focus:outline-none
+            '''
+
+error_main = '''
+            form-control 
+            block w-full 
+            px-3 
+            py-5 
+            text-base 
+            text-center
+            text-5xl 
+            text-red-700 
+            bg-white 
+            bg-clip-padding 
+            border 
+            border-solid 
+            border-red-500 
+            transition 
+            ease-in-out 
+            m-0 
+            focus:text-red-700 
             focus:bg-white 
             focus:border-blue-600 
             focus:outline-none
