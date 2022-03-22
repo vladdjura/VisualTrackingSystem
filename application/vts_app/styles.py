@@ -110,3 +110,4 @@ error_main = '''
             focus:border-blue-600 
             focus:outline-none
             '''
+

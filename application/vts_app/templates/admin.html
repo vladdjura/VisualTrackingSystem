@@ -1,0 +1,86 @@
+{% extends 'base.html' %}
+{% block a %}
+
+<form method="POST" action="">
+    {{ form.hidden_tag() }}
+    <div class="block p-6 rounded-lg bg-white max-w-sm m-auto">
+        
+        <div class='text-2xl mb-10 text-center'>
+            Admin page
+        </div>
+
+        <div class="form-group mb-6">
+            {{ form.password.label(class="form-label inline-block mb-2 text-gray-700") }}
+
+            {% if form.password.errors %}
+            <div class="form-group mb-6">          
+                {{ form.password(class=input_error) }}  
+            
+                {% for error in form.password.errors %}
+                <ul class="errorlist">
+                    <li class='text-red-600 text-sm'>{{ error }}</li>
+                </ul>
+                {% endfor %}
+            
+            {% else %}
+                {{ form.password(class=input_ok) }}  
+            {% endif %}       
+        </div>
+
+        <div class="form-group mb-6">
+            {{ form.ID.label(class="form-label inline-block mb-2 text-gray-700") }}
+
+            {% if form.ID.errors %}
+            <div class="form-group mb-6">          
+                {{ form.ID(class=input_error) }}  
+            
+                {% for error in form.ID.errors %}
+                <ul class="errorlist">
+                    <li class='text-red-600 text-sm'>{{ error }}</li>
+                </ul>
+                {% endfor %}
+            
+            {% else %}
+                {{ form.ID(class=input_ok) }}  
+            {% endif %}       
+        </div>
+
+        <div class="form-group mb-6">
+            {{ form.permission.label(class="form-label inline-block mb-2 text-gray-700", value=0) }}
+
+            {% if form.permission.errors %}
+            <div class="form-group mb-6">          
+                {{ form.permission(class=error_main) }}  
+            
+                {% for error in form.permission.errors %}
+                <ul class="errorlist">
+                    <li class='text-red-600 text-sm'>{{ error }}</li>
+                </ul>
+                {% endfor %}
+            
+            {% else %}
+                {{ form.permission(class=input_main, value=0) }}  
+            {% endif %}       
+        </div>
+
+        <div>
+            {{ form.submit(class=submit) }}
+        </div>
+      
+    </div>
+</form>
+
+    <div class="block p-6 rounded-lg max-w-xl bg-white m-auto">
+        <table>           
+            {% for user in users.active %}
+            <tr class='text-base mb-10 text-center'>
+              <th class='text-base mb-10 text-center p-6'>{{ user.id }}</th>
+              <th class='text-base mb-10 text-center p-6'>{{ user.registration }}</th>
+              <th class='text-base mb-10 text-center p-6'>{{ user.email }}</th>
+              <th class='text-base mb-10 text-center p-6'>{{ user.permission }}</th>
+            </tr>
+           {% endfor %}
+          </table> 
+
+{% endblock a %}
+

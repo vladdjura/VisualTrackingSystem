@@ -34,6 +34,15 @@ class ExitForm(FlaskForm):
     submit = SubmitField('Stop Tracking')
 
 class StoperForm(FlaskForm):
-    password = PasswordField('Password', validators=[DataRequired()])
+    password = IntegerField('Password', validators=[DataRequired()])
     user_id = IntegerField('User ID', validators=[DataRequired(), NumberRange(min=1)])
     submit = SubmitField('Stop Tracking')
+
+class AdminForm(FlaskForm):
+    password = IntegerField('Admin password', validators=[DataRequired()])
+    ID = IntegerField('User_id', validators=[DataRequired(), NumberRange(min=1)])
+    permission = IntegerField('Permission', validators=[NumberRange(min=0, max=1)])
+    submit = SubmitField('Change Permission')
+
+
+

@@ -1,7 +1,7 @@
 from vts_app.styles import input_ok, input_error, submit, input_main, error_main
 from flask import render_template, redirect, url_for, flash
 from vts_app import app, db, bcrypt
-from vts_app.forms import RegistrationForm, LoginForm, ParkingSpaceForm, ExitForm, StoperForm
+from vts_app.forms import RegistrationForm, LoginForm, ParkingSpaceForm, ExitForm, StoperForm, AdminForm
 from vts_app.models import User
 from datetime import datetime
 from flask_login import login_user, current_user, logout_user, login_required
@@ -41,8 +41,15 @@ def login():
     if form.validate_on_submit():
         user = User.query.filter_by(email=form.email.data).first()
         if user and bcrypt.check_password_hash(user.password, form.password.data):
-            login_user(user)
-            return redirect(url_for('main'))   
+            if user.colleague:
+                login_user(user)
+                return redirect(url_for('main'))
+            return render_template('login.html', 
+                            failed = True,
+                            form = form, 
+                            input_ok = input_ok, 
+                            input_error = input_error,
+                            submit = submit)
     return render_template('login.html', 
                             form = form, 
                             input_ok = input_ok, 
@@ -96,22 +103,21 @@ def logout():
     logout_user()
     return redirect(url_for('login'))   
 
-
 @app.route("/api")
 def api():
     objects = User.query.all()
     listing = {}
     listing['active'] = []
     for object in objects:
-        d = {}
-        d['ID'] = object.id
-        d['TIME'] = object.call_time.strftime('%H %M %S')
-        d['SPACE'] = object.parking_space
-        d['PHONE'] = object.phone
-        d['STATUS'] = object.status
-        listing['active'].append(d)
+        if object.colleague:
+            d = {}
+            d['ID'] = object.id
+            d['TIME'] = object.call_time.strftime('%H %M %S')
+            d['SPACE'] = object.parking_space
+            d['PHONE'] = object.phone
+            d['STATUS'] = object.status
+            listing['active'].append(d)
     return listing
-
 
 @app.route('/stoper', methods = ['GET','POST'])
 def stoper():
@@ -119,13 +125,44 @@ def stoper():
     if form.validate_on_submit():
         form = StoperForm()
         admin = User.query.get(1)
-        if bcrypt.check_password_hash(admin.password, form.password.data):
+        if bcrypt.check_password_hash(admin.password, str(form.password.data)):
             user = User.query.get(form.user_id.data)
             user.status = 0
             db.session.commit()
-            flash('Status successfully changed')    
+            flash('Status successfully changed')   
     return render_template('stoper.html',
                             form = form,
                             input_ok = input_ok, 
                             input_error = input_error,
                             submit = submit)
+
+
+@app.route('/admin', methods = ['GET','POST'])
+def admin():
+    form = AdminForm()
+    users = {'active':[]}
+    complete = User.query.all()
+    for user in complete:
+        user_dict = {}
+        user_dict['id'] = user.id
+        user_dict['registration'] = user.registration_time.strftime("%Y/%m/%d %H:%M:%S")
+        user_dict['email'] = user.email
+        user_dict['permission'] = user.colleague
+        users['active'].append(user_dict)
+        users['active'] = sorted(users['active'], key=lambda x: x['registration'], reverse=True)
+    if form.validate_on_submit():
+        form = AdminForm()
+        admin = User.query.get(1)
+        if bcrypt.check_password_hash(admin.password, str(form.password.data)):
+            user=User.query.get(form.ID.data)
+            user.colleague=form.permission.data
+            db.session.commit()
+    return render_template('admin.html',
+                            users = users,
+                            form = form,
+                            input_main = input_main, 
+                            input_ok = input_ok, 
+                            input_error = input_error,
+                            error_main = error_main,
+                            submit = submit)
+
