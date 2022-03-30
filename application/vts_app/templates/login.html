@@ -3,9 +3,8 @@
 
 <form method="POST" action="">
     {{ form.hidden_tag() }}
-    <div class="block p-6 rounded-lg bg-white max-w-sm m-auto">
-        
-        <div class='text-2xl mb-10 text-center'>
+ 
+        <div class='text-3xl my-10 text-center '>
             Sign in
         </div>
 
@@ -44,20 +43,22 @@
                 {{ form.password(class=input_ok) }}  
             {% endif %}       
         </div>
-       
-        <div class="mt-20 text-center">
+
+
+        <div class="mt-20 text-center" id="submiter">
             {% if failed %}
             <a href = "" class='text-red-600'>You are not registered as a Colleague yet!</a>
             {% else %}
-            <a href = "{{ url_for('register') }}" class='text-blue-600 text-sm'>Do not have an account? Please register</a>
+            <a href = "{{ url_for('register') }}" class='text-orange-600 text-sm hover:text-orange-700'>Do not have an account? Please register</a>
             {% endif %}
         </div>
-
-        <div>
+                
+        <div >
             {{ form.submit(class=submit) }}
         </div>
+
       
-    </div>
+
 </form>
 
 {% endblock a %}

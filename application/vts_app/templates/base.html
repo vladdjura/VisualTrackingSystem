@@ -4,26 +4,26 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <!-- CSS only -->
-  <link href=
-  "https://unpkg.com/tailwindcss@^1.0/dist/tailwind.min.css"
-          rel="stylesheet">
- 
+  <!-- CSS only --><script src="https://cdn.tailwindcss.com"></script>
+  <!--link href="https://unpkg.com/tailwindcss@^1.0/dist/tailwind.min.css" rel="stylesheet"--> 
   <title >Visual Tracking System</title>
-
-  <style>
-    body {
-      background-image: url("C:\\Users\\Vladislav\\Desktop\\RIT-spirit-paw.jpg");
-    }
-  </style>
-
 </head>
+<style>
+#header{
+  color: black;
+  -webkit-text-fill-color: rgb(248, 161, 62); /* Will override color (regardless of order) */
+  -webkit-text-stroke-width: 1px;
+  -webkit-text-stroke-color: black;
+}
 
-<body style='background-image: url("C:\\Users\\Vladislav\\Desktop\\RIT-spirit-paw.jpg")'>
-  <p class='text-center text-3xl mt-5 mb-3 text-blue-400'>Visual Tracking System</p>
+</style>
+<body >
+  <div class="block p-6 rounded-lg bg-transparent max-w-sm m-auto" id="base">
+    
+    <div class="mb-4 text-center stroke-black text-orange-600 text-3xl font-bold" id ="header">Visual Tracking System</div>
   {% with messages = get_flashed_messages(with_categories=true) %}
   {% if messages %}
-    {% for category, message in messages %}
+    {% for category, message in messages %} 
       <div class='text-red-600 text-center'>
         {{ message }}
       </div>
@@ -33,5 +33,8 @@
   {% block a %}
   {% endblock a %}
 </body>
+<img src="https://visualtrackingsystem.s3.amazonaws.com/rit-paw-crop.PNG", alt="paw" class="mt-4">
+
+</div>
 
 </html>

@@ -3,9 +3,9 @@
 
 <form method="POST" action="">
     {{ form.hidden_tag() }} <!-- CSRF - nema sanse da radi bez ovoga -->
-    <div class="block p-6 rounded-lg bg-white max-w-sm m-auto">
+    
         
-        <div class='text-2xl mb-10 text-center'>
+        <div class='text-2xl my-10 text-center'>
             Registration
         </div>
 
@@ -100,14 +100,14 @@
         </div>
        
         <div class="mt-20 text-center">
-            <a href = "{{ url_for('login') }}"  class='text-blue-600 text-sm'>Already have an account? Sign in</a>
+            <a href = "{{ url_for('login') }}"  class='text-orange-600 text-sm hover:text-orange-700'>Already have an account? Sign in</a>
         </div>
 
         <div>
             {{ form.submit(class=submit) }}
         </div>
       
-    </div>
+    
 </form>
 
 {% endblock a %}

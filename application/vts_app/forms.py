@@ -44,5 +44,6 @@ class AdminForm(FlaskForm):
     permission = IntegerField('Permission', validators=[NumberRange(min=0, max=1)])
     submit = SubmitField('Change Permission')
 
-
-
+class DataForm(FlaskForm):
+    password = PasswordField('Admin password', validators=[DataRequired()])
+    submit = SubmitField('Download Data')

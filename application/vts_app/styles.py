@@ -45,20 +45,20 @@ submit = '''
         mt-5 
         px-6 
         py-3 
-        bg-blue-600 
-        text-white
-        font-medium 
+        bg-orange-500 
+        text-black
+        font-bold 
         text-medium 
         leading-tight 
         uppercase 
         shadow-md
-        hover:bg-blue-700 
+        hover:bg-orange-700 
         hover:shadow-lg 
-        focus:bg-blue-700 
+        focus:bg-orange-700 
         focus:shadow-lg 
         focus:outline-none 
         focus:ring-0 
-        active:bg-blue-800 
+        active:bg-orange-800 
         active:shadow-lg
         transition 
         duration-150 

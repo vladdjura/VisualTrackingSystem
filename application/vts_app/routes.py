@@ -1,7 +1,7 @@
 from vts_app.styles import input_ok, input_error, submit, input_main, error_main
-from flask import render_template, redirect, url_for, flash
+from flask import render_template, redirect, url_for, flash, request
 from vts_app import app, db, bcrypt
-from vts_app.forms import RegistrationForm, LoginForm, ParkingSpaceForm, ExitForm, StoperForm, AdminForm
+from vts_app.forms import RegistrationForm, LoginForm, ParkingSpaceForm, ExitForm, StoperForm, AdminForm, DataForm
 from vts_app.models import User
 from datetime import datetime
 from flask_login import login_user, current_user, logout_user, login_required
@@ -114,32 +114,35 @@ def api():
             d['ID'] = object.id
             d['TIME'] = object.call_time.strftime('%H %M %S')
             d['SPACE'] = object.parking_space
-            d['PHONE'] = object.phone
             d['STATUS'] = object.status
             listing['active'].append(d)
     return listing
 
+
 @app.route('/stoper', methods = ['GET','POST'])
 def stoper():
     form = StoperForm()
-    if form.validate_on_submit():
-        form = StoperForm()
-        admin = User.query.get(1)
+    if request.method == 'POST': 
+        password = request.form.get('password')
+        user_id = int(request.form.get('user_id'))
+        admin = User.query.get(1)       
         if bcrypt.check_password_hash(admin.password, str(form.password.data)):
-            user = User.query.get(form.user_id.data)
+            user = User.query.get(user_id)
             user.status = 0
             db.session.commit()
-            flash('Status successfully changed')   
+            flash('Status successfully changed')    
+        return redirect(url_for('api'))    
     return render_template('stoper.html',
                             form = form,
+                            input_main = input_main, 
                             input_ok = input_ok, 
                             input_error = input_error,
+                            error_main = error_main,
                             submit = submit)
 
 
-@app.route('/admin', methods = ['GET','POST'])
-def admin():
-    form = AdminForm()
+# uz def admin..
+def complete():
     users = {'active':[]}
     complete = User.query.all()
     for user in complete:
@@ -150,13 +153,10 @@ def admin():
         user_dict['permission'] = user.colleague
         users['active'].append(user_dict)
         users['active'] = sorted(users['active'], key=lambda x: x['registration'], reverse=True)
-    if form.validate_on_submit():
-        form = AdminForm()
-        admin = User.query.get(1)
-        if bcrypt.check_password_hash(admin.password, str(form.password.data)):
-            user=User.query.get(form.ID.data)
-            user.colleague=form.permission.data
-            db.session.commit()
+    return users
+
+
+def admin_template(users, form):
     return render_template('admin.html',
                             users = users,
                             form = form,
@@ -165,4 +165,50 @@ def admin():
                             input_error = input_error,
                             error_main = error_main,
                             submit = submit)
+
+
+@app.route('/admin', methods = ['GET','POST'])
+def admin():
+    form = AdminForm()
+    users = complete()
+    if form.validate_on_submit():
+        form = AdminForm()
+        admin = User.query.get(1)
+        if bcrypt.check_password_hash(admin.password, str(form.password.data)):
+            user=User.query.get(form.ID.data)
+            user.colleague=form.permission.data
+            db.session.commit()
+            users = complete()
+            return admin_template(users, form)
+    return admin_template(users, form)
+
+
+@app.route('/data', methods = ['GET','POST'])
+def data():
+    form = DataForm()
+    if request.method == 'POST': 
+        password = request.form.get('password')
+        admin = User.query.get(1)
+        if bcrypt.check_password_hash(admin.password, str(password)):
+            objects = User.query.all()
+            listing = {}
+            listing['active'] = []
+            for object in objects:
+                d = {}
+                d['ID'] = object.id
+                d['TIME'] = object.call_time.strftime('%H %M %S')
+                d['SPACE'] = object.parking_space
+                d['PHONE'] = object.phone
+                d['STATUS'] = object.status
+                d['COLLEAGUE'] = object.colleague
+                listing['active'].append(d)
+            return listing
+    return render_template('data.html',
+                            form = form,
+                            input_main = input_main, 
+                            input_ok = input_ok, 
+                            input_error = input_error,
+                            error_main = error_main,
+                            submit = submit)
+
 

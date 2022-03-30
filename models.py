@@ -2,6 +2,8 @@ import cv2
 import numpy as np
 import json
 from datetime import datetime
+import pytz
+import requests
 from twilio.rest import Client
 
 class Video:
@@ -268,7 +270,7 @@ class Video:
                 
         return variances
 
-    def tracker(self, ac, at, tw, tracker, start = 0, stop = None):
+    def tracker_fake(self, ac, at, tw, tracker, start = 0, stop = None):
         print(tracker)
         local = {}
         for i in range(start, stop):
@@ -296,6 +298,40 @@ class Video:
         message = client.messages.create(to=sms, from_=tw, body=my_msg)
 
 
+    def tracker(self, ac, at, tw, admin_password, data_url, stoper_url, start = 0, stop = None):
+        for frame_number in range(start, stop):
+            active = {}
+            if frame_number % 10 == 0:
+                data = self.data(admin_password, data_url)
+                for person in data['active']:
+                    if person['COLLEAGUE'] and person['STATUS']:
+                        active[person['ID']] = (person['SPACE'], person['PHONE'])
+            self.frame = frame_number
+            frame = self.read
+            variances = self.var
+            for id, listing in active.items():
+                space = listing[0]
+                phone = listing[1]
+                if variances[space] < self.variance:
+                    del active[id]
+                    print(self.variance, variances[space], id)
+                    moment = datetime.now()
+                    moment = moment.strftime("%H:%M:%S")
+                    self.massage(ac, at, tw, phone, moment, space)
+                    self.stoper(admin_password, stoper_url, id)
+                    return f'Vehicle has left parking space {space}, at {moment}. \nFrame {i}'
+
+
+    def data(self, admin_password, data_url):
+        url = data_url
+        data = {'password':admin_password}
+        r = requests.post(url, data = data)
+        return r.json()
+
+    def stoper(self, admin_password, stoper_url, id):
+        url = stoper_url
+        data = {'password':admin_password, 'user_id': id}
+        r = requests.post(url, data = data)
 
             
 
